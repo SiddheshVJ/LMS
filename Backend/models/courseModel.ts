@@ -1,10 +1,10 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
-import { Interface } from "readline";
+import { IUser } from "./userModel";
 
 interface IComment extends Document {
-	user: object;
-	comment: string;
-	commentReplies?: IComment[];
+	user: IUser;
+	question: string;
+	questionReplies?: IComment[];
 }
 
 interface IReview extends Document {
@@ -39,7 +39,7 @@ interface ICourse extends Document {
 	price: number;
 	estimatedPrice: number;
 	thumbnail: object;
-	tax: string;
+	tags: string;
 	level: string;
 	demoVideUrl: string;
 	benefits: { title: string }[];
@@ -66,8 +66,8 @@ const linkSchema = new Schema<ILink>({
 
 const commentSchema = new Schema<IComment>({
 	user: Object,
-	comment: String,
-	commentReplies: [Object],
+	question: String,
+	questionReplies: [Object],
 });
 
 const courseDataSchema = new Schema<ICourseData>({
@@ -75,7 +75,6 @@ const courseDataSchema = new Schema<ICourseData>({
 	description: String,
 	reviews: [reviewSchema],
 	videoUrl: String,
-	videoThumbnail: Object,
 	videoSection: String,
 	videoLength: Number,
 	videoPlayer: String,
@@ -102,16 +101,13 @@ const courseSchema = new Schema<ICourse>({
 	},
 	thumbnail: {
 		public_id: {
-			required: true,
 			type: String,
 		},
-		required: true,
 		url: {
-			required: true,
 			type: String,
 		},
 	},
-	tax: {
+	tags: {
 		required: true,
 		type: String,
 	},

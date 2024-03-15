@@ -7,6 +7,7 @@ import { errorMiddleware } from "./middleware/error";
 
 // import all routers
 import userRouter from "./routes/userRoute";
+import cousetRouter from "./routes/courseRoute";
 
 // bodyparser
 app.use(express.json({ limit: "50mb" }));
@@ -23,6 +24,7 @@ app.use(
 
 // routes
 app.use("/api/v1", userRouter);
+app.use("/api/v1", cousetRouter);
 
 // testing api
 app.get("/test", (req: Request, res: Response, next: NextFunction) => {
