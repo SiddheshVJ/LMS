@@ -21,7 +21,7 @@ export const getNotifications = catchAsyncError(
 );
 
 // Updatel notification status - only for admin
-export const updateNotifications = catchAsyncError(
+export const updateNotification = catchAsyncError(
 	async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const notification = await notificationModel.findById(req.params.id);

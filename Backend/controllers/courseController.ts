@@ -11,11 +11,11 @@ import mongoose from "mongoose";
 import ejs from "ejs";
 import path from "path";
 import sendMail from "../utils/sendEmail";
+import notificationModel from "../models/notificationModel";
 
 require("dotenv").config();
 
 // upload course
-
 export const uploadCourse = catchAsyncError(
 	async (req: Request, res: Response, next: NextFunction) => {
 		try {
@@ -170,7 +170,7 @@ export const getCourseByUser = catchAsyncError(
 	}
 );
 
-// Add questions i course
+// Add questions in course
 interface IAddQuestionData {
 	question: string;
 	courseId: string;
@@ -204,6 +204,13 @@ export const addQuestion = catchAsyncError(
 
 			// add this question to our course content
 			courseContent.questions.push(newQuestion);
+
+			// Add question notification
+			await notificationModel.create({
+				user: req.user?._id,
+				title: "New Question Recieved.",
+				message: `You have new question in ${courseContent?.title} `,
+			});
 
 			// save the updated course
 			await course.save();
@@ -265,7 +272,12 @@ export const addAnswer = catchAsyncError(
 			await course.save();
 
 			if (req.user?._id === question.user._id) {
-				// create a notification
+				// Add question notification
+				await notificationModel.create({
+					user: req.user?._id,
+					title: "New Question Reply Recieved.",
+					message: `You have new question reply in ${courseContent?.title} `,
+				});
 			} else {
 				const data = {
 					name: question.user.name,
@@ -364,7 +376,6 @@ export const addReview = catchAsyncError(
 );
 
 // add reply in review
-
 interface IAddReviewData {
 	comment: string;
 	courseId: string;

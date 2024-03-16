@@ -2,7 +2,7 @@ import express from "express";
 import { authorisedRoles, isAuthenticated } from "../middleware/auth";
 import {
 	getNotifications,
-	updateNotifications,
+	updateNotification,
 } from "../controllers/notificationcontroller";
 
 const notificationRoute = express.Router();
@@ -17,7 +17,7 @@ notificationRoute.put(
 	"/update-notification-status/:id",
 	isAuthenticated,
 	authorisedRoles("admin"),
-	updateNotifications
+	updateNotification
 );
 
 export default notificationRoute;
