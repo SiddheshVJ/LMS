@@ -32,7 +32,7 @@ export const uploadCourse = catchAsyncError(
 				};
 			}
 			createCourse(data, res, next);
-		} catch (error) {
+		} catch (error: any) {
 			return next(new ErrorHandler(error.message, 400));
 		}
 	}
@@ -70,7 +70,7 @@ export const editCourse = catchAsyncError(
 				success: true,
 				course,
 			});
-		} catch (error) {
+		} catch (error: any) {
 			return next(new ErrorHandler(error.message, 400));
 		}
 	}
@@ -102,7 +102,7 @@ export const getSingleCourse = catchAsyncError(
 					course,
 				});
 			}
-		} catch (error) {
+		} catch (error: any) {
 			return next(new ErrorHandler(error.message, 400));
 		}
 	}
@@ -136,7 +136,7 @@ export const getAllCourse = catchAsyncError(
 					courses,
 				});
 			}
-		} catch (error) {
+		} catch (error: any) {
 			return next(new ErrorHandler(error.message, 400));
 		}
 	}
@@ -164,7 +164,7 @@ export const getCourseByUser = catchAsyncError(
 				success: true,
 				content,
 			});
-		} catch (error) {
+		} catch (error: any) {
 			return next(new ErrorHandler(error.message, 400));
 		}
 	}
@@ -430,6 +430,29 @@ export const getAllCoursesByAdmin = catchAsyncError(
 	async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			getAllCoursesService(res);
+		} catch (error: any) {
+			return next(new ErrorHandler(error.message, 400));
+		}
+	}
+);
+
+// Delete course - only for admin
+export const deleteCourse = catchAsyncError(
+	async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			const { id } = req.params;
+
+			const course = await courseModel.findById(id);
+			if (!course) {
+				return next(new ErrorHandler("Course not found.", 404));
+			}
+
+			await courseModel.deleteOne({ _id: id });
+			await redis.del(id);
+			res.status(200).json({
+				success: true,
+				message: "Course deleted successfully.",
+			});
 		} catch (error: any) {
 			return next(new ErrorHandler(error.message, 400));
 		}

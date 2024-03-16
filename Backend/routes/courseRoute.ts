@@ -10,6 +10,7 @@ import {
 	addReview,
 	addReplyToReview,
 	getAllCoursesByAdmin,
+	deleteCourse,
 } from "../controllers/courseController";
 import { isAuthenticated, authorisedRoles } from "../middleware/auth";
 
@@ -43,6 +44,12 @@ cousetRouter.get(
 	isAuthenticated,
 	authorisedRoles("admin"),
 	getAllCoursesByAdmin
+);
+cousetRouter.delete(
+	"/delete-course/:id",
+	isAuthenticated,
+	authorisedRoles("admin"),
+	deleteCourse
 );
 
 export default cousetRouter;

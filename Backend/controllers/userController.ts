@@ -13,7 +13,11 @@ import {
 	sendToken,
 } from "../utils/jwt";
 import { redis } from "../utils/redis";
-import { getAllUsersService, getUserById } from "../services/user.service";
+import {
+	getAllUsersService,
+	getUserById,
+	updateUserRoleService,
+} from "../services/user.service";
 
 require("dotenv").config();
 
@@ -65,7 +69,7 @@ export const registerUser = catchAsyncError(
 					message: `Please check your email ${user.email} to activate your account.`,
 					activationToken: activationToken.token,
 				});
-			} catch (error) {
+			} catch (error: any) {
 				return next(new ErrorHandler(error.message, 400));
 			}
 		} catch (error: any) {
@@ -132,7 +136,7 @@ export const activateUser = catchAsyncError(
 				success: true,
 				user,
 			});
-		} catch (error) {
+		} catch (error: any) {
 			return next(new ErrorHandler(error.message, 400));
 		}
 	}
@@ -184,7 +188,7 @@ export const logoutUser = catchAsyncError(
 				success: true,
 				message: "Logged out successfully.",
 			});
-		} catch (error) {
+		} catch (error: any) {
 			return next(new ErrorHandler(error.message, 400));
 		}
 	}
@@ -231,7 +235,7 @@ export const updateAccessToken = catchAsyncError(
 				status: "Success",
 				accessToken,
 			});
-		} catch (error) {
+		} catch (error: any) {
 			return next(new ErrorHandler(error.message, 400));
 		}
 	}
@@ -243,7 +247,7 @@ export const getUser = catchAsyncError(
 		try {
 			const userID = req.user._id;
 			getUserById(userID, res);
-		} catch (error) {
+		} catch (error: any) {
 			return next(new ErrorHandler(error.message, 400));
 		}
 	}
@@ -268,7 +272,7 @@ export const socialAuth = catchAsyncError(
 			} else {
 				sendToken(user, 200, res);
 			}
-		} catch (error) {
+		} catch (error: any) {
 			return next(new ErrorHandler(error.message, 400));
 		}
 	}
@@ -304,7 +308,7 @@ export const updateUserInfo = catchAsyncError(
 					user,
 				});
 			}
-		} catch (error) {
+		} catch (error: any) {
 			return next(new ErrorHandler(error.message, 400));
 		}
 	}
@@ -345,7 +349,7 @@ export const updateUserPassword = catchAsyncError(
 			res.status(201).json({
 				success: true,
 			});
-		} catch (error) {
+		} catch (error: any) {
 			return next(new ErrorHandler(error.message, 400));
 		}
 	}
@@ -395,7 +399,7 @@ export const updateProfilePicture = catchAsyncError(
 				success: true,
 				user,
 			});
-		} catch (error) {
+		} catch (error: any) {
 			return next(new ErrorHandler(error.message, 400));
 		}
 	}
@@ -407,6 +411,41 @@ export const getAllUsersServices = catchAsyncError(
 	async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			getAllUsersService(res);
+		} catch (error: any) {
+			return next(new ErrorHandler(error.message, 400));
+		}
+	}
+);
+
+// update user role - only for admin
+export const updateUserRole = catchAsyncError(
+	async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			const { id, role } = req.body;
+			updateUserRoleService(res, id, role);
+		} catch (error: any) {
+			return next(new ErrorHandler(error.message, 400));
+		}
+	}
+);
+
+// Delete user role - only for admin
+export const deleteUser = catchAsyncError(
+	async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			const { id } = req.params;
+
+			const user = await userModel.findById(id);
+			if (!user) {
+				return next(new ErrorHandler("User not found.", 404));
+			}
+
+			await userModel.deleteOne({ _id: id });
+			await redis.del(id);
+			res.status(200).json({
+				success: true,
+				message: "User deleted successfully.",
+			});
 		} catch (error: any) {
 			return next(new ErrorHandler(error.message, 400));
 		}
