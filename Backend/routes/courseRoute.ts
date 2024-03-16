@@ -9,6 +9,7 @@ import {
 	addAnswer,
 	addReview,
 	addReplyToReview,
+	getAllCoursesByAdmin,
 } from "../controllers/courseController";
 import { isAuthenticated, authorisedRoles } from "../middleware/auth";
 
@@ -27,8 +28,7 @@ cousetRouter.put(
 	editCourse
 );
 cousetRouter.get("/get-course/:id", getSingleCourse);
-cousetRouter.get("/get-all-courses", getAllCourse);
-cousetRouter.get("/get-course-content/:id", isAuthenticated, getCourseByUser);
+cousetRouter.get("/get-courses", getAllCourse);
 cousetRouter.put("/add-question", isAuthenticated, addQuestion);
 cousetRouter.put("/add-answer", isAuthenticated, addAnswer);
 cousetRouter.put("/add-review/:id", isAuthenticated, addReview);
@@ -37,6 +37,12 @@ cousetRouter.put(
 	isAuthenticated,
 	authorisedRoles("admin"),
 	addReplyToReview
+);
+cousetRouter.get(
+	"/get-all-courses",
+	isAuthenticated,
+	authorisedRoles("admin"),
+	getAllCoursesByAdmin
 );
 
 export default cousetRouter;

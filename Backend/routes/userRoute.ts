@@ -10,6 +10,7 @@ import {
 	updateUserInfo,
 	updateUserPassword,
 	updateProfilePicture,
+	getAllUsersServices,
 } from "../controllers/userController";
 import { isAuthenticated, authorisedRoles } from "../middleware/auth";
 
@@ -25,5 +26,11 @@ userRouter.post("/socialAuth", socialAuth);
 userRouter.put("/update-user-info", isAuthenticated, updateUserInfo);
 userRouter.put("/update-user-password", isAuthenticated, updateUserPassword);
 userRouter.put("/update-user-avatar", isAuthenticated, updateProfilePicture);
+userRouter.get(
+	"/all-users",
+	isAuthenticated,
+	authorisedRoles("admin"),
+	getAllUsersServices
+);
 
 export default userRouter;

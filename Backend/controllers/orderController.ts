@@ -8,7 +8,7 @@ import path from "path";
 import ejs from "ejs";
 import sendMail from "../utils/sendEmail";
 import notificationModel from "../models/notificationModel";
-import { newOrder } from "../services/order.service";
+import { getAllOrdersService, newOrder } from "../services/order.service";
 
 // Create order
 
@@ -77,11 +77,23 @@ export const createOrder = catchAsyncError(
 				message: `You have a new order from ${course?.name} `,
 			});
 
-			course.purchased ? course.purchased += 1 : course.purchased;
+			course.purchased ? (course.purchased += 1) : course.purchased;
 
 			await course.save();
 
 			newOrder(data, res, next);
+		} catch (error: any) {
+			return next(new ErrorHandler(error.message, 400));
+		}
+	}
+);
+
+// get all orders to admin dashbboard
+
+export const getAllOrders = catchAsyncError(
+	async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			getAllOrdersService(res);
 		} catch (error: any) {
 			return next(new ErrorHandler(error.message, 400));
 		}
