@@ -122,7 +122,7 @@ export const activateUser = catchAsyncError(
 				return next(new ErrorHandler("User already exists.", 400));
 			}
 
-			const iser = await userModel.create({
+			const user = await userModel.create({
 				name,
 				email,
 				password,
@@ -130,6 +130,7 @@ export const activateUser = catchAsyncError(
 
 			res.status(201).json({
 				success: true,
+				user,
 			});
 		} catch (error) {
 			return next(new ErrorHandler(error.message, 400));

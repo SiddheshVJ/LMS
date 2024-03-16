@@ -7,6 +7,8 @@ import {
 	getCourseByUser,
 	addQuestion,
 	addAnswer,
+	addReview,
+	addReplyToReview,
 } from "../controllers/courseController";
 import { isAuthenticated, authorisedRoles } from "../middleware/auth";
 
@@ -29,5 +31,12 @@ cousetRouter.get("/get-all-courses", getAllCourse);
 cousetRouter.get("/get-course-content/:id", isAuthenticated, getCourseByUser);
 cousetRouter.put("/add-question", isAuthenticated, addQuestion);
 cousetRouter.put("/add-answer", isAuthenticated, addAnswer);
+cousetRouter.put("/add-review/:id", isAuthenticated, addReview);
+cousetRouter.put(
+	"/add-reply-review",
+	isAuthenticated,
+	authorisedRoles("admin"),
+	addReplyToReview
+);
 
 export default cousetRouter;
