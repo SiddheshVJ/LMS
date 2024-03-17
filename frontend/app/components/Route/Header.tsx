@@ -1,8 +1,8 @@
 "use client";
 import Link from "next/link";
 import React, { FC, useState } from "react";
-import NavItems from "../utils/NavItems";
-import ThemeSwitcher from "../utils/ThemeSwitcher";
+import NavItems from "../../utils/NavItems";
+import ThemeSwitcher from "../../utils/ThemeSwitcher";
 import { HiOutlineMenuAlt3, HiOutlineUserCircle } from "react-icons/hi";
 
 type Props = {
