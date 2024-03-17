@@ -212,7 +212,9 @@ export const updateAccessToken = catchAsyncError(
 			const session = await redis.get(decoded.id as string);
 
 			if (!session) {
-				return next(new ErrorHandler(message, 400));
+				return next(
+					new ErrorHandler("Please login to access this resources.", 400)
+				);
 			}
 			const user = JSON.parse(session);
 			const accessToken = jwt.sign(
@@ -230,6 +232,8 @@ export const updateAccessToken = catchAsyncError(
 
 			res.cookie("access_token", accessToken, accessTokenOptions);
 			res.cookie("refresh_token", refreshToken, refreshTokenOptions);
+
+			await redis.set(user._id, JSON.stringify(user), "EX", 5); // 604800 = 7 days
 
 			res.status(200).json({
 				status: "Success",
@@ -279,7 +283,6 @@ export const socialAuth = catchAsyncError(
 );
 
 // update user info
-
 interface IUpdateInfo {
 	email: string;
 	name: string;
@@ -315,7 +318,6 @@ export const updateUserInfo = catchAsyncError(
 );
 
 // Update user password
-
 interface IUpdatePass {
 	oldPass: string;
 	newPass: string;
@@ -356,7 +358,6 @@ export const updateUserPassword = catchAsyncError(
 );
 
 // Update profile piccture and avatar
-
 interface IUpdateProfilePic {
 	avatar: string;
 }
@@ -406,7 +407,6 @@ export const updateProfilePicture = catchAsyncError(
 );
 
 // get all users to admin dashbboard
-
 export const getAllUsersServices = catchAsyncError(
 	async (req: Request, res: Response, next: NextFunction) => {
 		try {
