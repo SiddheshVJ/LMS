@@ -22,7 +22,8 @@ app.use(cookieParser());
 //CORS
 app.use(
 	cors({
-		origin: process.env.ORIGIN,
+		origin: ["http://localhost:8000"],
+		credentials: true,
 	})
 );
 
